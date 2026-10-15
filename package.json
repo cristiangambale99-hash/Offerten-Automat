@@ -9,13 +9,13 @@
     "postinstall": "node scripts/brand.js"
   },
   "dependencies": {
-    "@sparticuz/chromium": "^131.0.1",
+    "@sparticuz/chromium": "^153.0.0",
     "@supabase/supabase-js": "^2.47.10",
+    "dejavu-fonts-ttf": "^2.37.3",
     "next": "14.2.21",
-    "puppeteer-core": "^23.11.1",
+    "puppeteer-core": "^25.14.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "resend": "^4.1.2",
-    "dejavu-fonts-ttf": "^2.37.3"
+    "resend": "^4.1.2"
   }
 }
