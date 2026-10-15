@@ -29,6 +29,7 @@ function plzKanton(plz){
 }
 
 /* ---------- Parser für die Formular-Mail ---------- */
+const deDate=v=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(v||'').trim());return m?`${m[3]}.${m[2]}.${m[1]}`:v;};
 function parseMail(txt){
   const t=txt.replace(/\r/g,'');
   const get=k=>{const m=t.match(new RegExp('^[ \\t]*'+k+'[ \\t]*:[ \\t]*(.*)$','mi'));return m?m[1].trim():''};
@@ -47,7 +48,7 @@ function parseMail(txt){
     verglasung:((spezial.match(/Verglasung[ \t]*:[ \t]*(.*)/i)||['',''])[1]).trim(),
     duebelRaw:((spezial.match(/Dübellöcher[ \t]*:[ \t]*(.*)/i)||['',''])[1]).trim(),
     besichtigung:/Besichtigung vor Ort/i.test(t)&&!/Offerte anfragen/i.test(t.split(/Anrede/i)[0]||'')&&/Besichtigung/i.test((t.match(/Offertanfrage für:\s*\n?\s*(.*)/i)||['',''])[1]),
-    von:get('Von'),bis:get('Bis'),
+    von:deDate(get('Von')),bis:deDate(get('Bis')),
     bilder:/Bilder:\s*\n?\s*https?:\/\//i.test(t),
     nachricht, quelle:get('Wie sind Sie auf uns aufmerksam geworden\\?')||(t.match(/aufmerksam geworden\?\s*\n\s*(.*)/i)||['',''])[1].trim()
   };
