@@ -1,0 +1,1 @@
+{ "functions": { "app/api/**/*.js": { "maxDuration": 60, "memory": 1536 } }, "regions": ["fra1"] }

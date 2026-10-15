@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Offerten-Automat – Clean Service</title><link rel="icon" href="/brand/signet.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap">
+<style>
+/* ===== Clean Service App-Layout v1 =====
+   Gerüst: Icon-Leiste links (Desktop) · Topbar mit Menü-Knopf (Handy) · Seitenkopf Eisblau mit Welle
+   Seitentypen: Dashboard «Heute zu tun» · Liste mit Detail-Panel von rechts · Formular einspaltig mit Abschnitten */
+:root{
+  --cs-bg:#ffffff; --cs-bg-soft:#f6fafb; --cs-surface:#ffffff; --cs-head:#eef7f8; --cs-line:#dcebee; --cs-line-strong:#c5dde1;
+  --cs-fg:#3c3c3b; --cs-fg-2:#767676; --cs-brand:#2bb6b7; --cs-brand-text:#1b8384; --cs-brand-dark:#187778;
+  --cs-rail:#1b8384; --cs-rail-fg:rgba(255,255,255,.72); --cs-rail-active:rgba(255,255,255,.16);
+  --cs-mint-bg:rgba(96,190,179,.22); --cs-aqua-bg:rgba(113,182,198,.22); --cs-taube-bg:rgba(152,194,209,.3);
+  --cs-warn:#b7641f; --cs-warn-bg:rgba(224,160,58,.18); --cs-err:#b8453c; --cs-err-bg:rgba(200,85,75,.12);
+  --cs-scrim:rgba(31,42,43,.32); --cs-shadow:0 18px 50px -24px rgba(27,131,132,.45);
+  --cs-radius:10px; --cs-radius-lg:16px;
+  --cs-font:"Brandon Text","Figtree",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --cs-head-font:"Brandon Grotesque","Figtree",system-ui,sans-serif;
+  --rail-w:76px; --topbar-h:56px;
+  color-scheme:light; /* Clean-Service-Apps sind bewusst immer hell (Markenbild: weiss, frisch) */
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;overflow-x:clip}
+[hidden]{display:none!important}
+body{background:var(--cs-bg);color:var(--cs-fg);font-family:var(--cs-font);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+p{margin:0} h1,h2,h3{margin:0;font-family:var(--cs-head-font);text-wrap:balance}
+:focus-visible{outline:2px solid var(--cs-brand-text);outline-offset:2px}
+
+/* ---- Gerüst ---- */
+.app{display:flex;min-height:100%}
+.rail{position:fixed;inset:0 auto 0 0;width:var(--rail-w);background:var(--cs-rail);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 0 16px;z-index:20}
+.signet{width:50px;height:50px;border-radius:14px;background:#fff;display:grid;place-items:center;margin-bottom:14px}
+.signet img{width:30px;height:auto;display:block}
+.logo-full{width:160px;height:auto;display:block}
+.nav-i{width:64px;border:0;background:transparent;color:var(--cs-rail-fg);border-radius:12px;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-size:10.5px;font-weight:500;transition:background .18s ease-out,color .18s ease-out}
+.nav-i svg{width:22px;height:22px}
+.nav-i:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-i[aria-current="page"]{background:var(--cs-rail-active);color:#fff}
+.rail .spacer{flex:1}
+.avatar{width:36px;height:36px;border-radius:50%;background:#9ad3d3;color:#1f2a2b;display:grid;place-items:center;font-weight:600;font-size:13px}
+.main{flex:1;min-width:0;margin-left:var(--rail-w)}
+.topbar{display:none}
+
+/* ---- Seitenkopf ---- */
+.phead{position:relative;overflow:hidden;background:var(--cs-head);border-bottom:1px solid var(--cs-line)}
+.phead .inner{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:26px 32px 24px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.eyebrow{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cs-brand-text);font-weight:600}
+.phead h1{margin-top:6px;font-weight:300;text-transform:uppercase;letter-spacing:.08em;font-size:clamp(26px,3vw,34px);line-height:1.1;color:var(--cs-brand-text)}
+.phead .sub{margin-top:6px;color:var(--cs-fg-2);font-size:14.5px}
+.wave{position:absolute;right:0;bottom:0;width:min(560px,70%);height:100%;pointer-events:none}
+.content{max-width:1200px;margin:0 auto;padding:24px 32px 48px}
+
+/* ---- Komponenten ---- */
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:10px 16px;min-height:42px;border:1px solid transparent;font-weight:600;font-size:14.5px;cursor:pointer;transition:background .18s ease-out,transform .12s ease-out,border-color .18s ease-out}
+.btn:active{transform:scale(.97)}
+.btn svg{width:18px;height:18px}
+.btn-p{background:#1b8384;color:#fff}.btn-p:hover{background:#187778}
+.btn-s{background:var(--cs-surface);border-color:var(--cs-line-strong);color:var(--cs-brand-text)}.btn-s:hover{background:var(--cs-bg-soft)}
+.btn-g{background:transparent;color:var(--cs-brand-text);padding-inline:10px}.btn-g:hover{background:var(--cs-bg-soft)}
+.card{background:var(--cs-surface);border:1px solid var(--cs-line);border-radius:var(--cs-radius-lg)}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 18px 10px}
+.card-h h2{font-size:16px;font-weight:600;font-family:var(--cs-font)}
+.muted{color:var(--cs-fg-2)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap;color:var(--cs-fg)}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.55}
+.b-ok{background:var(--cs-mint-bg)} .b-info{background:var(--cs-aqua-bg)} .b-warn{background:var(--cs-warn-bg)} .b-err{background:var(--cs-err-bg)} .b-neutral{background:var(--cs-taube-bg)}
+.num{font-variant-numeric:tabular-nums}
+
+/* Dashboard */
+.dash{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px;align-items:start}
+.todo{list-style:none;margin:0;padding:0 8px 8px}
+.todo li{display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:12px;transition:background .18s ease-out,opacity .3s ease-out}
+.todo li:hover{background:var(--cs-bg-soft)}
+.todo .ic{width:40px;height:40px;flex:0 0 auto}
+.todo .tx{flex:1;min-width:0}
+.todo .tx b{display:block;font-weight:600;font-size:14.5px}
+.todo .tx small{color:var(--cs-fg-2);font-size:13px}
+.todo li.done{opacity:.45}
+.todo li.done .tx b{text-decoration:line-through}
+.check{width:30px;height:30px;border-radius:50%;border:2px solid var(--cs-line-strong);background:transparent;cursor:pointer;flex:0 0 auto;display:grid;place-items:center;transition:all .18s ease-out}
+.check:hover{border-color:var(--cs-brand)}
+.check svg{width:16px;height:16px;opacity:0;color:#fff}
+li.done .check{background:#1b8384;border-color:#1b8384}
+li.done .check svg{opacity:1}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kpi{padding:14px 16px}
+.kpi .l{font-size:12.5px;color:var(--cs-fg-2)}
+.kpi .v{font-family:var(--cs-head-font);font-weight:400;font-size:28px;line-height:1.15;margin-top:4px}
+.kpi .d{font-size:12.5px;margin-top:2px}
+.up{color:var(--cs-brand-text)} .down{color:var(--cs-err)}
+.spark{padding:14px 16px 10px;margin-top:12px}
+.spark svg{width:100%;height:110px;display:block}
+
+/* Liste */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.search{flex:1;min-width:200px;position:relative}
+.search input{width:100%;min-height:42px;border:1px solid var(--cs-line-strong);background:var(--cs-surface);border-radius:8px;padding:9px 12px 9px 38px;font-size:15px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--cs-fg-2)}
+.chip{border:1px solid var(--cs-line-strong);background:var(--cs-surface);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:500;cursor:pointer;min-height:38px}
+.chip[aria-pressed="true"]{background:#1b8384;border-color:#1b8384;color:#fff}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--cs-fg-2);font-weight:600;padding:12px 16px;border-bottom:1px solid var(--cs-line);white-space:nowrap}
+td{padding:13px 16px;border-bottom:1px solid var(--cs-line);white-space:nowrap}
+tbody tr{cursor:pointer;transition:background .15s ease-out}
+tbody tr:hover{background:var(--cs-bg-soft)}
+tbody tr[aria-selected="true"]{background:var(--cs-head)}
+tbody tr:last-child td{border-bottom:0}
+td .name{font-weight:600}
+.empty{padding:36px 16px;text-align:center;display:grid;justify-items:center;gap:8px;color:var(--cs-fg-2)}
+.empty .ic{width:96px;height:96px}
+.mlist{display:none}
+
+/* Slide-over */
+.scrim{position:fixed;inset:0;background:var(--cs-scrim);opacity:0;pointer-events:none;transition:opacity .22s ease-out;z-index:30}
+.scrim.open{opacity:1;pointer-events:auto}
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--cs-surface);border-left:1px solid var(--cs-line);box-shadow:var(--cs-shadow);transform:translateX(102%);transition:transform .28s cubic-bezier(.22,1,.36,1);z-index:31;display:flex;flex-direction:column}
+.panel{visibility:hidden;transition:transform .28s cubic-bezier(.22,1,.36,1),visibility 0s .28s}
+.panel.open{transform:none;visibility:visible;transition-delay:0s}
+.panel-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 22px 16px;border-bottom:1px solid var(--cs-line);background:var(--cs-head)}
+.panel-h h2{font-size:20px;font-weight:600;font-family:var(--cs-font)}
+.icon-btn{width:40px;height:40px;border-radius:10px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--cs-fg);flex:0 0 auto}
+.icon-btn:hover{background:var(--cs-bg-soft)}
+.icon-btn svg{width:22px;height:22px}
+.panel-b{padding:18px 22px;overflow-y:auto;flex:1}
+.dl{display:grid;grid-template-columns:130px 1fr;gap:10px 14px;font-size:14.5px}
+.dl dt{color:var(--cs-fg-2)} .dl dd{margin:0;font-weight:500}
+.sec-t{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--cs-fg-2);font-weight:600;margin:22px 0 10px}
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.timeline li{display:flex;gap:10px;font-size:14px}
+.timeline li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cs-brand);margin-top:7px;flex:0 0 auto}
+.panel-f{padding:14px 22px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--cs-line);display:flex;gap:10px;flex-wrap:wrap}
+
+/* Formular */
+.form{max-width:680px}
+.fsec{padding:20px 22px;margin-bottom:16px}
+.fsec h2{font-size:16px;font-weight:600;font-family:var(--cs-font);margin-bottom:4px}
+.fsec .hint{font-size:13.5px;color:var(--cs-fg-2);margin-bottom:14px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:grid;gap:6px;margin-bottom:14px;min-width:0}
+.field label{font-size:13.5px;font-weight:600}
+.field label .req{color:var(--cs-err)}
+.field input,.field select,.field textarea{width:100%;min-height:44px;border:1px solid var(--cs-line-strong);background:var(--cs-surface);border-radius:8px;padding:10px 12px;font-size:16px;transition:border-color .15s ease-out}
+.field textarea{min-height:90px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#1b8384;box-shadow:0 0 0 3px rgba(43,182,183,.18)}
+.field.err input{border-color:var(--cs-err)}
+.field .msg{font-size:13px;color:var(--cs-err);display:none}
+.field.err .msg{display:block}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{border:1px solid var(--cs-line-strong);border-radius:8px;padding:9px 14px;cursor:pointer;font-size:14.5px;font-weight:500;min-height:42px;display:flex;align-items:center}
+.seg label{position:relative}
+.seg input{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none}
+.seg input:checked+span{color:var(--cs-brand-text)}
+.seg label:has(input:checked){border-color:#1b8384;background:var(--cs-mint-bg)}
+.factions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.factions .btn-p .ld{width:22px;height:22px;display:none}
+.factions .btn-p.busy .ld{display:block}
+.factions .btn-p.busy .lbl2{display:none}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--cs-fg);color:var(--cs-bg);border-radius:12px;padding:7px 18px 7px 7px;display:flex;align-items:center;gap:10px;font-weight:500;font-size:14.5px;z-index:40;transition:opacity .22s ease-out,transform .22s ease-out;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast .ic{width:34px;height:34px;flex:0 0 auto}
+
+/* Drawer (Handy) */
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(300px,86%);background:var(--cs-surface);z-index:33;transform:translateX(-102%);transition:transform .28s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 16px;box-shadow:var(--cs-shadow)}
+.drawer{visibility:hidden;transition:transform .28s cubic-bezier(.22,1,.36,1),visibility 0s .28s}
+.drawer.open{transform:none;visibility:visible;transition-delay:0s}
+.todo .mob{display:none}
+.drawer .dh{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 14px;border-bottom:1px solid var(--cs-line);margin-bottom:10px}
+.dnav{border:0;background:transparent;width:100%;display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;font-size:15.5px;font-weight:500;cursor:pointer;text-align:left;min-height:48px}
+.dnav svg{width:22px;height:22px;color:var(--cs-brand-text)}
+.dnav[aria-current="page"]{background:var(--cs-head);color:var(--cs-brand-text)}
+
+[data-view]{display:none}
+[data-view].on{display:block}
+
+/* ---- Handy ---- */
+@media (max-width:820px){
+  .rail{display:none}
+  .main{margin-left:0}
+  .topbar{display:flex;position:sticky;top:0;z-index:25;height:calc(var(--topbar-h) + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 8px 0 16px;align-items:center;justify-content:space-between;background:var(--cs-surface);border-bottom:1px solid var(--cs-line)}
+  .topbar .signet{width:auto;height:auto;margin:0;border-radius:0;background:none}
+  .topbar .signet img{width:auto;height:34px}
+  .topbar .app-n{font-weight:600;font-size:15px;margin-left:10px;flex:1}
+  .phead .inner{padding:20px 16px 18px}
+  .phead .inner>.btn{width:100%;justify-content:center}
+  .content{padding:16px 16px 40px}
+  .dash{grid-template-columns:minmax(0,1fr)}
+  .todo .desk{display:none}
+  .todo .mob{display:inline-flex;margin-bottom:4px}
+  .todo{padding:0 4px 6px}
+  .todo li{padding:12px 8px}
+  .tablewrap table{display:none}
+  .mlist{display:block}
+  .mrow{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--cs-line);cursor:pointer}
+  .mrow:last-child{border-bottom:0}
+  .mrow .tx{flex:1;min-width:0}
+  .mrow .tx b{display:block;font-weight:600}
+  .mrow .tx small{color:var(--cs-fg-2);font-size:13px}
+  .panel{width:100%;border-left:0}
+  .frow{grid-template-columns:minmax(0,1fr)}
+  .factions .btn{flex:1;justify-content:center}
+  .dl{grid-template-columns:110px 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== App-spezifisch: Offerten-Automat Umzugsreinigung ===== */
+.kpi .v.small{font-size:22px}
+.sum{position:sticky;top:20px}
+.sum .row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--cs-line);font-size:14px}
+.sum .row:last-child{border-bottom:0}
+.sum .row.tot{font-weight:600;font-size:16px;border-top:2px solid var(--cs-line-strong);margin-top:4px;padding-top:12px}
+.sum .row.sub{color:var(--cs-fg-2)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+.flags{display:grid;gap:8px;margin:10px 0 4px}
+.flag{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--cs-warn-bg);font-size:13.5px}
+.flag.ok{background:var(--cs-mint-bg)}
+.flag .ic{width:28px;height:28px;flex:0 0 auto;margin-top:-2px}
+.pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.step{padding:12px 12px 10px;border:1px solid var(--cs-line);border-radius:12px;background:var(--cs-bg-soft)}
+.step b{display:block;font-size:13.5px}
+.step small{color:var(--cs-fg-2);font-size:12.5px;display:block;margin-top:2px}
+.step .n{width:24px;height:24px;border-radius:50%;background:#1b8384;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600;margin-bottom:8px}
+.calc{width:100%;border-collapse:collapse;font-size:14px}
+.calc td{padding:7px 0;border-bottom:1px solid var(--cs-line);white-space:normal}
+.calc td:last-child{text-align:right;white-space:nowrap}
+.calc tr.tot td{font-weight:600;border-top:2px solid var(--cs-line-strong);border-bottom:0;padding-top:10px}
+.calc tr.sub td{color:var(--cs-fg-2);font-size:13px}
+.price-grid td input{width:110px;min-height:38px;border:1px solid var(--cs-line-strong);border-radius:8px;padding:6px 10px;font-size:15px;text-align:right;background:#fff;color:var(--cs-fg);color-scheme:light;-webkit-appearance:none;appearance:none}
+input,select,textarea{background:#fff;color:var(--cs-fg);color-scheme:light}
+.price-grid td input:focus{outline:none;border-color:#1b8384;box-shadow:0 0 0 3px rgba(43,182,183,.18)}
+.price-grid td{white-space:normal}
+.note{font-size:13.5px;color:var(--cs-fg-2);padding:10px 14px;border-radius:10px;background:var(--cs-bg-soft);border:1px solid var(--cs-line)}
+.chips-inline{display:flex;flex-wrap:wrap;gap:6px}
+.chips-inline span{font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--cs-bg-soft);border:1px solid var(--cs-line)}
+.hero-ic{width:120px;height:120px;margin:0 auto}
+.doc-modal{position:fixed;inset:0;background:var(--cs-scrim);z-index:50;display:none;align-items:stretch;justify-content:center;padding:0}
+.doc-modal.open{display:flex}
+.doc-wrap{background:#e9eef0;width:100%;height:100%;overflow:auto;display:flex;flex-direction:column}
+.doc-bar{position:sticky;top:0;z-index:2;background:var(--cs-surface);border-bottom:1px solid var(--cs-line);padding:10px 20px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.doc-bar b{font-size:15px}
+.pages{padding:24px 12px 48px;display:grid;gap:20px;justify-items:center}
+.pwrap{width:calc(595pt * var(--ps,1));height:calc(842.25pt * var(--ps,1));position:relative}
+.page{width:595pt;height:842.25pt;position:absolute;left:0;top:0;transform:scale(var(--ps,1));transform-origin:0 0;background:#fff none 0 0/100% 100% no-repeat;box-shadow:0 10px 40px -20px rgba(27,131,132,.5);font-family:Verdana,"DejaVu Sans",Geneva,sans-serif;font-size:9pt;line-height:11pt;color:#000;overflow:hidden}
+.page *{box-sizing:border-box}
+.page .a{position:absolute;white-space:nowrap}
+.page .abs{position:absolute;left:71pt;top:140pt;width:287pt;font-size:6.5pt;line-height:8pt;border-bottom:.5pt solid #000;padding-bottom:1pt;white-space:nowrap}
+.page p{margin:0 0 11pt;white-space:normal}
+.page b{font-weight:700}
+.page .flow{position:absolute;left:71pt;right:128pt}
+.page .betreff{left:71pt;font-size:12pt;line-height:15pt;font-weight:700}
+.page .dl2{display:grid;grid-template-columns:90pt 1fr;margin-bottom:11pt}
+.page .sec{font-size:11pt;line-height:13pt;font-weight:700}
+.page .it{display:flex;justify-content:space-between;gap:8pt;line-height:11pt}
+.page .it .amt{font-weight:700}
+.page .gap{height:var(--gap,16pt)}
+.page .cols{position:absolute;left:71pt;top:176pt;font-size:7.5pt;line-height:11pt;width:396pt}
+.page .cols span{position:absolute;top:0}
+.page .hr{position:absolute;left:71pt;width:396pt;height:0;border-top:.5pt solid #808080}
+.page .hr.k{border-top:.5pt solid #000}
+.page .hr.k1{border-top:1pt solid #000}
+.page .tot{position:absolute;left:0;width:100%;top:0}
+.page .tot .r{position:absolute;right:0;top:0}
+.page .lbl{color:#808080}
+.page .ul{position:absolute;height:0;border-top:.8pt solid #000}
+.page .agb{color:#4d4d4d;font-size:9pt;line-height:11pt}
+.page .agb h3{font-size:11pt;line-height:13pt;color:#60beb3;font-weight:700;margin:0 0 10pt;display:inline-block;border-bottom:1.2pt solid #60beb3;padding-bottom:1pt;font-family:inherit}
+.page .agb .sh{margin-top:22pt}
+.page .agb .row{display:grid;grid-template-columns:34pt 1fr;gap:0;margin-bottom:11pt;text-align:justify}
+.page .agb .row span:first-child{text-align:left}
+.page .agb ul{margin:0;padding:0;list-style:none}
+.page .agb li::before{content:"•";margin-right:4pt}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}.sum{position:static}.pipe{grid-template-columns:1fr 1fr}.pages{padding:12px 8px 40px}}
+@media print{
+  body *{visibility:hidden}
+  .doc-modal,.doc-modal *{visibility:visible}
+  .doc-modal{position:static;display:block!important;background:#fff}
+  .doc-wrap{background:#fff;height:auto;overflow:visible}
+  .doc-bar{display:none}
+  .pages{padding:0;gap:0;display:block}
+  .pwrap{width:595pt;height:842.25pt;page-break-after:always}.page{box-shadow:none;transform:none;margin:0}
+  @page{size:A4;margin:0}
+}
+
+.dash-1{grid-template-columns:minmax(0,1fr)}
+.kpis-4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:820px){.kpis-4{grid-template-columns:1fr 1fr}}
+
+#awChart{height:230px}
+
+</style></head><body>
+<!-- Icon-Sprite (eine Linien-Familie, 1.8 px, runde Enden) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.8a3.3 3.3 0 0 1 0 6.4M18 14.8c1.9.7 3.1 2.4 3.5 5.2"/></g></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/></g></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></g></symbol>
+    <symbol id="i-cog" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M4.2 7.5l2 1.2M17.8 15.3l2 1.2M4.2 16.5l2-1.2M17.8 8.7l2-1.2"/></g></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></g></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16"/><path d="M6.5 16V11M11 16V6.5M15.5 16v-3M20 16V9"/></g></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="3"/><path d="M4 7l8 6 8-6"/></g></symbol>
+<symbol id="i-inbox" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 13l2.2-7.2A1.5 1.5 0 0 1 7.1 4.8h9.8a1.5 1.5 0 0 1 1.4 1l2.2 7.2v4.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M3.5 13h5l1.2 2.4h4.6L15.5 13h5"/></g></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h7.5L19 9v10a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19V5a1.5 1.5 0 0 1 1-1.5z"/><path d="M13.5 3.5V9H19M8.5 13h7M8.5 16.5h7"/></g></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12V5a1.5 1.5 0 0 1 1.5-1.5h7l8.5 8.5-8.5 8.5z"/><circle cx="8" cy="8" r="1.4"/></g></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5L3.5 10.5l7 2.5 2.5 7z"/><path d="M20.5 3.5L10.5 13"/></g></symbol>
+</defs>
+</svg>
+
+<div class="app">
+  <nav class="rail" aria-label="Hauptnavigation">
+    <div class="signet"><img src="/brand/signet.png" alt="Clean Service"></div>
+    <button class="nav-i" data-go="dash" aria-current="page"><svg><use href="#i-home"/></svg>Start</button>
+    <button class="nav-i" data-go="anfragen"><svg><use href="#i-inbox"/></svg>Anfragen</button>
+    <button class="nav-i" data-go="offerten"><svg><use href="#i-doc"/></svg>Offerten</button>
+    <button class="nav-i" data-go="test"><svg><use href="#i-plus"/></svg>Erfassen</button>
+    <button class="nav-i" data-go="preise"><svg><use href="#i-tag"/></svg>Preise</button>
+    <button class="nav-i" data-go="auswertung"><svg><use href="#i-chart"/></svg>Auswertung</button>
+    <div class="spacer"></div>
+    <button class="nav-i" data-go="settings"><svg><use href="#i-cog"/></svg>Einstellungen</button>
+    <a class="avatar" title="%%USER%% – abmelden" href="/logout" style="text-decoration:none">%%INIT%%</a>
+  </nav>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="signet"><img src="/brand/signet.png" alt="Clean Service"></div><span class="app-n">Offerten-Automat</span>
+      <button class="icon-btn" id="menuBtn" aria-label="Menü öffnen" aria-expanded="false"><svg><use href="#i-menu"/></svg></button>
+    </header>
+
+    <!-- ===== START ===== -->
+    <section data-view="dash" class="on">
+      <div class="phead">
+        <svg class="wave" viewBox="0 0 560 140" preserveAspectRatio="none" aria-hidden="true"><path d="M140 140 C230 90 330 120 420 70 C480 38 520 40 560 18 L560 140 Z" fill="#9ad3d3" opacity=".45"/><path d="M280 140 C350 110 430 128 500 92 C530 78 548 76 560 70 L560 140 Z" fill="#2bb6b7" opacity=".28"/></svg>
+        <div class="inner">
+          <div><div class="eyebrow">Umzugsreinigung · <span id="todayLbl"></span></div><h1>Offerten-Automat</h1><p class="sub">Anfrage rein, Offerte raus – ohne manuelles Schreiben.</p></div>
+          <button class="btn btn-p" data-go="test"><svg><use href="#i-plus"/></svg>Anfrage erfassen</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="dash dash-1">
+          <div>
+            <div class="kpis kpis-4" id="kpis"></div>
+            <div class="card spark"><div class="card-h" style="padding:0 0 8px"><h2>Anfragen der letzten 8 Wochen</h2><span class="muted" style="font-size:12.5px">automatisch vs. mit Freigabe</span></div><svg id="spark" viewBox="0 0 400 110" preserveAspectRatio="none"></svg></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="card-h"><h2>So läuft es automatisch</h2><span class="badge b-ok">Aktiv</span></div>
+          <div style="padding:0 18px 18px">
+            <div class="pipe">
+              <div class="step"><span class="n">1</span><b>Anfrage trifft ein</b><small>Webformular clean-service.ch (Webhook) oder Mail an spezialreinigung@</small></div>
+              <div class="step"><span class="n">2</span><b>Felder auslesen</b><small>Kunde, Objekt, m², Verschmutzung, Zusätze, Kanton via PLZ</small></div>
+              <div class="step"><span class="n">3</span><b>Preis berechnen</b><small>Preistabelle wie im Kalkulator, inkl. Zuschlägen</small></div>
+              <div class="step"><span class="n">4</span><b>Offerte erzeugen</b><small>Begleitbrief, Vertrag, Auftragserteilung, AGB als PDF</small></div>
+              <div class="step"><span class="n">5</span><b>Senden oder freigeben</b><small>Standardfall: sofort an den Kunden. Sonderfall: wartet hier auf einen Klick</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ANFRAGEN ===== -->
+    <section data-view="anfragen">
+      <div class="phead">
+        <svg class="wave" viewBox="0 0 560 140" preserveAspectRatio="none" aria-hidden="true"><path d="M140 140 C230 90 330 120 420 70 C480 38 520 40 560 18 L560 140 Z" fill="#9ad3d3" opacity=".45"/><path d="M280 140 C350 110 430 128 500 92 C530 78 548 76 560 70 L560 140 Z" fill="#2bb6b7" opacity=".28"/></svg>
+        <div class="inner">
+          <div><div class="eyebrow">Eingang</div><h1>Anfragen</h1><p class="sub">Alle Offertanfragen Umzugsreinigung, automatisch erfasst.</p></div>
+          <button class="btn btn-p" data-go="test"><svg><use href="#i-plus"/></svg>Anfrage erfassen</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="toolbar">
+          <div class="search"><svg><use href="#i-search"/></svg><input id="qA" type="search" placeholder="Name, Ort, PLZ oder Nummer suchen" aria-label="Suchen"></div>
+          <button class="chip" data-f="all" aria-pressed="true">Alle</button>
+          <button class="chip" data-f="review">Freigabe nötig</button>
+          <button class="chip" data-f="sent">Offerte gesendet</button>
+          <button class="chip" data-f="accepted">Auftrag erteilt</button>
+          <button class="chip" data-f="confirmed">Bestätigt</button>
+          <button class="chip" data-f="declined">Abgelehnt</button>
+        </div>
+        <div class="card tablewrap">
+          <table id="tblA"><thead><tr><th>Eingang</th><th>Kunde</th><th>Objekt</th><th>Ort</th><th>Termin</th><th>Status</th><th style="text-align:right">Preis exkl.</th></tr></thead><tbody></tbody></table>
+          <div class="mlist" id="mlA"></div>
+          <div class="empty" id="emptyA" hidden><div class="ic" data-lottie="empty"></div><b>Keine Anfragen gefunden</b><span>Passe Suche oder Filter an.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== OFFERTEN ===== -->
+    <section data-view="offerten">
+      <div class="phead">
+        <svg class="wave" viewBox="0 0 560 140" preserveAspectRatio="none" aria-hidden="true"><path d="M140 140 C230 90 330 120 420 70 C480 38 520 40 560 18 L560 140 Z" fill="#9ad3d3" opacity=".45"/><path d="M280 140 C350 110 430 128 500 92 C530 78 548 76 560 70 L560 140 Z" fill="#2bb6b7" opacity=".28"/></svg>
+        <div class="inner">
+          <div><div class="eyebrow">Ausgang</div><h1>Offerten</h1><p class="sub">Erstellte Dokumente, Versand und Rücklauf.</p></div>
+          <button class="btn btn-p" id="btnSendAll"><svg><use href="#i-send"/></svg>Alle Standardfälle senden</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="toolbar">
+          <div class="search"><svg><use href="#i-search"/></svg><input id="qO" type="search" placeholder="Offertnummer oder Kunde" aria-label="Suchen"></div>
+          <button class="chip" data-fo="all" aria-pressed="true">Alle</button>
+          <button class="chip" data-fo="review">Wartet auf Freigabe</button>
+          <button class="chip" data-fo="sent">Gesendet</button>
+          <button class="chip" data-fo="accepted">Auftrag erteilt</button>
+          <button class="chip" data-fo="confirmed">Bestätigt</button>
+        </div>
+        <div class="card tablewrap">
+          <table id="tblO"><thead><tr><th>Offerte</th><th>Kunde</th><th>Datum</th><th>Versand</th><th>Status</th><th style="text-align:right">Total inkl. MwSt</th></tr></thead><tbody></tbody></table>
+          <div class="mlist" id="mlO"></div>
+          <div class="empty" id="emptyO" hidden><div class="ic" data-lottie="empty"></div><b>Keine Offerten gefunden</b><span>Passe Suche oder Filter an.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ERFASSEN ===== -->
+    <section data-view="test">
+      <div class="phead">
+        <svg class="wave" viewBox="0 0 560 140" preserveAspectRatio="none" aria-hidden="true"><path d="M140 140 C230 90 330 120 420 70 C480 38 520 40 560 18 L560 140 Z" fill="#9ad3d3" opacity=".45"/><path d="M280 140 C350 110 430 128 500 92 C530 78 548 76 560 70 L560 140 Z" fill="#2bb6b7" opacity=".28"/></svg>
+        <div class="inner">
+          <div><div class="eyebrow">Erfassung</div><h1>Anfrage erfassen</h1><p class="sub">Telefonisch aufgenommen oder Formular-Mail eingefügt – die Offerte entsteht sofort.</p></div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="two">
+          <form class="form" id="testForm" novalidate style="max-width:none">
+            <div class="toolbar" style="margin-bottom:16px"><button type="button" class="chip" data-mode="manual" aria-pressed="true">Manuell erfassen (Telefon)</button><button type="button" class="chip" data-mode="mail" aria-pressed="false">Formular-Mail einfügen</button></div>
+
+            <div id="modeMail" hidden>
+              <div class="card fsec">
+                <h2>Formular-Mail einfügen</h2>
+                <p class="hint">Genau so, wie die Mail «Schnellanfrage Umzugsreinigung» von noreply@clean-service.ch ankommt.</p>
+                <div class="field"><label for="mailTxt">Mailtext</label><textarea id="mailTxt" style="min-height:260px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px"></textarea></div>
+                <div class="chips-inline" style="margin-top:-6px">
+                  <button type="button" class="chip" data-sample="0">Beispiel Eisenkraemer (Sion)</button>
+                  <button type="button" class="chip" data-sample="1">Beispiel Papovic (Neuenhof)</button>
+                  <button type="button" class="chip" data-sample="2">Beispiel Haus Winterthur</button>
+                </div>
+              </div>
+              <div class="card fsec"><h2>Erkannte Angaben</h2><p class="hint">Was der Automat aus der Mail gelesen hat.</p><div id="parsed"></div></div>
+            </div>
+
+            <div id="modeManual">
+              <div class="card fsec">
+                <h2>Kunde</h2><p class="hint">Wie im Kontaktformular auf clean-service.ch.</p>
+                <div class="field"><label>Anrede</label><div class="seg"><label><input type="radio" name="m_anrede" value="Frau" checked><span>Frau</span></label><label><input type="radio" name="m_anrede" value="Herr"><span>Herr</span></label></div></div>
+                <div class="frow"><div class="field"><label>Vorname <span class="req">*</span></label><input name="m_vorname"><span class="msg">Bitte Vorname eingeben</span></div><div class="field"><label>Name <span class="req">*</span></label><input name="m_name"><span class="msg">Bitte Name eingeben</span></div></div>
+                <div class="field"><label>Adresse</label><input name="m_adresse" placeholder="Strasse und Nr."></div>
+                <div class="frow"><div class="field"><label>PLZ <span class="req">*</span></label><input name="m_plz" inputmode="numeric" maxlength="4"><span class="msg">PLZ eingeben</span></div><div class="field"><label>Ort <span class="req">*</span></label><input name="m_ort"><span class="msg">Ort eingeben</span></div></div>
+                <div class="frow"><div class="field"><label>Telefon <span class="req">*</span></label><input name="m_tel" inputmode="tel"><span class="msg">Telefon eingeben</span></div><div class="field"><label>E-Mail <span class="req">*</span></label><input name="m_mail" inputmode="email"><span class="msg">E-Mail für den Versand nötig</span></div></div>
+              </div>
+              <div class="card fsec">
+                <h2>Objekt</h2><p class="hint">Grundlage für den Preis.</p>
+                <div class="frow"><div class="field"><label>Anzahl Zimmer <span class="req">*</span></label><select name="m_zimmer"><option>1</option><option>1.5</option><option>2</option><option>2.5</option><option>3</option><option>3.5</option><option>4</option><option>4.5</option><option>5</option><option>5.5</option><option>6</option><option>6.5</option><option>7</option><option>7.5</option><option>8</option><option>8.5</option><option>9</option><option>9.5</option><option>10</option></select></div><div class="field"><label>Quadratmeter <span class="req">*</span></label><input name="m_m2" inputmode="numeric" placeholder="z. B. 85"><span class="msg">m² eingeben</span></div></div>
+                <div class="field"><label>Typ <span class="req">*</span></label><select name="m_typ"><option>Wohnung</option><option>Einfamilienhaus</option><option>Reiheneinfamilienhaus</option><option>Attikawohnung</option><option>Dachwohnung</option><option>Maisonettewohnung</option><option>Studio</option></select></div>
+                <div class="field"><label>Verschmutzungsgrad</label><div class="seg"><label><input type="radio" name="m_soil" value="wenig"><span>wenig</span></label><label><input type="radio" name="m_soil" value="mittel" checked><span>mittel</span></label><label><input type="radio" name="m_soil" value="stark"><span>stark</span></label></div></div>
+              </div>
+              <div class="card fsec">
+                <h2>Zusatz</h2><p class="hint">Mehrfachauswahl wie im Formular.</p>
+                <div class="field"><label>Räume</label><div class="seg"><label><input type="checkbox" name="m_keller"><span>Keller</span></label><label><input type="checkbox" name="m_estrich"><span>Estrich</span></label><label><input type="checkbox" name="m_wm"><span>Waschmaschine / Tumbler</span></label></div></div>
+                <div class="frow"><div class="field"><label>Balkon</label><select name="m_balkon"><option value="">–</option><option>Besenrein</option><option>Hochdruck</option></select></div><div class="field"><label>Terrasse</label><select name="m_terrasse"><option value="">–</option><option>Besenrein</option><option>Hochdruck</option></select></div></div>
+                <div class="frow"><div class="field"><label>Sitzplatz</label><select name="m_sitzplatz"><option value="">–</option><option>Besenrein</option><option>Hochdruck</option></select></div><div class="field"><label>Garage</label><select name="m_garage"><option value="">–</option><option>Besenrein</option><option>Hochdruck</option></select></div></div>
+              </div>
+              <div class="card fsec">
+                <h2>Spezielle Dienstleistungen</h2><p class="hint">Optionen aus dem Formular.</p>
+                <div class="frow"><div class="field"><label>Teppich sprühextrahieren</label><select name="m_teppich"><option value="">–</option><option>1 Zimmer</option><option>2 Zimmer</option><option>3 Zimmer</option><option>4 Zimmer</option></select></div><div class="field"><label>Verglasung</label><select name="m_verglasung"><option value="">–</option><option>Balkon</option><option>Terrasse</option><option>Eingang</option><option>Wintergarten</option></select></div></div>
+                <div class="field"><label>Dübellöcher</label><select name="m_duebel"><option value="">–</option><option>&gt; 10</option><option>&gt; 20</option><option>&gt; 30</option><option>&gt; 40</option></select></div>
+              </div>
+              <div class="card fsec">
+                <h2>Termin und Nachricht</h2><p class="hint">Wunschtermin und Bemerkungen aus dem Gespräch.</p>
+                <div class="frow"><div class="field"><label>Reinigung von</label><input name="m_von" type="date"></div><div class="field"><label>bis</label><input name="m_bis" type="date"></div></div>
+                <div class="field"><label>Nachricht / Notizen</label><textarea name="m_nachricht" placeholder="z. B. Übergabe mit Verwaltung am 30.10. um 12 Uhr"></textarea></div>
+                <div class="field"><label>Wie auf uns aufmerksam geworden?</label><select name="m_quelle"><option>Telefon</option><option>Suchmaschine (Google, Bing, Yahoo, etc.)</option><option>KI-Suchmaschine (ChatGPT, Google Gemini, etc.)</option><option>Social Media</option><option>Weiterempfehlung</option><option>Fahrzeugwerbung</option></select></div>
+              </div>
+            </div>
+
+            <div class="factions">
+              <button type="button" class="btn btn-s" id="btnPreviewDoc"><svg><use href="#i-doc"/></svg>Offerte ansehen</button>
+              <button type="submit" class="btn btn-p"><div class="ld" data-lottie="loader"></div><span class="lbl2">Offerte erstellen</span></button>
+            </div>
+          </form>
+          <div>
+            <div class="card sum" id="sumCard"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PREISE ===== -->
+    <section data-view="preise">
+      <div class="phead">
+        <svg class="wave" viewBox="0 0 560 140" preserveAspectRatio="none" aria-hidden="true"><path d="M140 140 C230 90 330 120 420 70 C480 38 520 40 560 18 L560 140 Z" fill="#9ad3d3" opacity=".45"/><path d="M280 140 C350 110 430 128 500 92 C530 78 548 76 560 70 L560 140 Z" fill="#2bb6b7" opacity=".28"/></svg>
+        <div class="inner">
+          <div><div class="eyebrow">Kalkulation</div><h1>Preise</h1><p class="sub">Die Preistabelle aus dem Kalkulator – hier gepflegt, überall gültig.</p></div>
+          <button class="btn btn-p" id="btnSavePrices"><svg><use href="#i-ok"/></svg>Preise speichern</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="two">
+          <div>
+            <div class="card tablewrap" style="margin-bottom:16px"><div class="card-h"><h2>Grundreinigung und Objekttyp</h2></div><table class="price-grid" id="pgBase"><tbody></tbody></table></div>
+            <div class="card tablewrap" style="margin-bottom:16px"><div class="card-h"><h2>Zusatzarbeiten</h2></div><table class="price-grid" id="pgExtra"><tbody></tbody></table></div>
+            <div class="card tablewrap" style="margin-bottom:16px"><div class="card-h"><h2>Zuschläge und Rabatte</h2></div><table class="price-grid" id="pgSur"><tbody></tbody></table></div>
+            <div class="card tablewrap"><div class="card-h"><h2>Kantonszuschlag</h2></div><table class="price-grid" id="pgCanton"><tbody></tbody></table></div>
+          </div>
+          <div>
+            <div class="card sum"><div class="card-h"><h2>Rechenregel</h2></div>
+              <div style="padding:0 18px 18px;font-size:14px;display:grid;gap:8px">
+                <div class="note">Grundreinigung = Grundpauschale + m² × m²-Preis</div>
+                <div class="note">+ Zusatzarbeiten (je nach Anfrage), + EFH-Zuschlag 30 % auf die Grundreinigung bei Häusern, + Dübellöcher, + Fugen</div>
+                <div class="note">+ Kantonszuschlag nach PLZ</div>
+                <div class="note">Verschmutzung auf das Zwischentotal: wenig −10 %, mittel 0 %, stark +50 %</div>
+                <div class="note">Endpreis exkl. MwSt, dann 8.1 % MwSt, Gesamttotal auf 5 Rappen gerundet</div>
+                <div class="note" style="background:var(--cs-warn-bg);border-color:transparent">Im Webformular wählbar, aber nicht im Kalkulator: Typen Attika/Dach/Maisonette/Studio/Reihenhaus, Garage Hochdruck, Teppich 1–4 Zimmer, Verglasung Terrasse/Eingang/Wintergarten, Dübellöcher >10/>20/>30/>40. Felder stehen links – bei 0 hält die Offerte zur Freigabe an.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AUSWERTUNG ===== -->
+    <section data-view="auswertung">
+      <div class="phead">
+        <svg class="wave" viewBox="0 0 560 140" preserveAspectRatio="none" aria-hidden="true"><path d="M140 140 C230 90 330 120 420 70 C480 38 520 40 560 18 L560 140 Z" fill="#9ad3d3" opacity=".45"/><path d="M280 140 C350 110 430 128 500 92 C530 78 548 76 560 70 L560 140 Z" fill="#2bb6b7" opacity=".28"/></svg>
+        <div class="inner">
+          <div><div class="eyebrow">Kennzahlen</div><h1>Auswertung</h1><p class="sub">Umsatz, Quoten und Herkunft der Anfragen – laufend aus den Offerten gerechnet.</p></div>
+          <button class="btn btn-s" id="btnExport"><svg><use href="#i-doc"/></svg>Als Excel exportieren</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="kpis kpis-4" id="awKpis"></div>
+        <div class="card" style="margin-top:20px;padding:18px 22px;display:flex;gap:22px;align-items:center;flex-wrap:wrap">
+          <div class="ic" data-lottie="clock" style="width:64px;height:64px;flex:0 0 auto"></div>
+          <div style="flex:1;min-width:220px"><div class="eyebrow">Zeitersparnis Offertenschreibung</div><div style="display:flex;gap:28px;flex-wrap:wrap;margin-top:6px"><div><div class="muted" style="font-size:12.5px">Seit Live-Gang</div><div class="num" style="font-family:var(--cs-head-font);font-size:30px;line-height:1.1" id="tsAll">–</div></div><div><div class="muted" style="font-size:12.5px">Oktober</div><div class="num" style="font-family:var(--cs-head-font);font-size:30px;line-height:1.1" id="tsMon">–</div></div><div><div class="muted" style="font-size:12.5px">Entspricht</div><div class="num" style="font-family:var(--cs-head-font);font-size:30px;line-height:1.1" id="tsDays">–</div></div></div></div>
+          <div class="field" style="margin:0;min-width:200px"><label for="tsMin">Minuten pro Offerte (manuell)</label><input id="tsMin" type="number" value="8" min="1" style="max-width:160px"><span class="muted" style="font-size:12.5px">Durchschnitt Sachbearbeitung bisher</span></div>
+        </div>
+        <div class="two" style="margin-top:20px;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)">
+          <div class="card spark" style="margin-top:0"><div class="card-h" style="padding:0 0 8px"><h2>Umsatz pro Monat</h2><span class="muted" style="font-size:12.5px">offeriert vs. erteilt, exkl. MwSt</span></div><svg id="awChart" viewBox="0 0 520 190"></svg><div id="awLegend" class="chips-inline" style="margin-top:8px"></div></div>
+          <div>
+            <div class="card tablewrap" style="margin-bottom:16px"><div class="card-h"><h2>Nach Quelle</h2></div><table id="awSrc"><thead><tr><th>Quelle</th><th style="text-align:right">Anfragen</th><th style="text-align:right">Aufträge</th><th style="text-align:right">Umsatz</th></tr></thead><tbody></tbody></table></div>
+            <div class="card tablewrap"><div class="card-h"><h2>Nach Kanton</h2></div><table id="awKt"><thead><tr><th>Kanton</th><th style="text-align:right">Anfragen</th><th style="text-align:right">Ø Offerte</th></tr></thead><tbody></tbody></table></div>
+          </div>
+        </div>
+        <div class="card tablewrap" style="margin-top:20px"><div class="card-h"><h2>Monatsübersicht</h2><span class="muted" style="font-size:12.5px">alle Beträge exkl. MwSt</span></div><table id="awMon"><thead><tr><th>Monat</th><th style="text-align:right">Anfragen</th><th style="text-align:right">Offeriert</th><th style="text-align:right">Erteilt</th><th style="text-align:right">Umsatz erteilt</th><th style="text-align:right">Quote</th><th style="text-align:right">Ø Zeit bis Offerte</th><th style="text-align:right">Zeit gespart</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ===== EINSTELLUNGEN ===== -->
+    <section data-view="settings">
+      <div class="phead">
+        <svg class="wave" viewBox="0 0 560 140" preserveAspectRatio="none" aria-hidden="true"><path d="M140 140 C230 90 330 120 420 70 C480 38 520 40 560 18 L560 140 Z" fill="#9ad3d3" opacity=".45"/><path d="M280 140 C350 110 430 128 500 92 C530 78 548 76 560 70 L560 140 Z" fill="#2bb6b7" opacity=".28"/></svg>
+        <div class="inner">
+          <div><div class="eyebrow">Steuerung</div><h1>Einstellungen</h1><p class="sub">Wer unterschreibt, wann der Automat anhält, wohin kopiert wird.</p></div>
+          <button class="btn btn-p" id="btnSaveSettings"><svg><use href="#i-ok"/></svg>Speichern</button>
+        </div>
+      </div>
+      <div class="content">
+        <form class="form" id="setForm" novalidate>
+          <div class="card fsec"><h2>Versandregel</h2><p class="hint">Standardfälle gehen ohne Klick raus. Sonderfälle warten auf «Heute zu tun».</p>
+            <div class="field"><label>Automatisch senden</label><div class="seg">
+              <label><input type="radio" name="mode" value="auto" checked><span>Standardfälle sofort senden</span></label>
+              <label><input type="radio" name="mode" value="review"><span>Immer zuerst freigeben</span></label>
+            </div></div>
+            <div class="field"><label>Als Sonderfall anhalten bei</label><div class="seg">
+              <label><input type="checkbox" name="r_canton" checked><span>Kanton ausserhalb Preistabelle</span></label>
+              <label><input type="checkbox" name="r_photos" checked><span>Bilder oder Grundriss angehängt</span></label>
+              <label><input type="checkbox" name="r_carpet" checked><span>Teppich sprühextrahieren</span></label>
+              <label><input type="checkbox" name="r_m2" checked><span>m² fehlt oder über 250</span></label>
+              <label><input type="checkbox" name="r_house"><span>Haus / EFH</span></label>
+              <label><input type="checkbox" name="r_big" checked><span>Total über CHF 2'500</span></label>
+            </div></div>
+          </div>
+          <div class="card fsec"><h2>Absender und Unterschrift</h2><p class="hint">Erscheint auf Begleitbrief und in der Mail an den Kunden.</p>
+            <div class="frow">
+              <div class="field"><label for="sName">Name</label><input id="sName" value="Lionel Melone"></div>
+              <div class="field"><label for="sFn">Funktion</label><input id="sFn" value="Spezialreinigung"></div>
+            </div>
+            <div class="frow">
+              <div class="field"><label for="sMail">Absender-Mail</label><input id="sMail" value="spezialreinigung@clean-service.ch"></div>
+              <div class="field"><label for="sCc">Kopie an</label><input id="sCc" value="info@clean-service.ch"></div>
+            </div>
+            <div class="field"><label for="sValid">Gültigkeit der Offerte (Tage)</label><input id="sValid" type="number" value="30" style="max-width:160px"></div>
+          </div>
+          <div class="card fsec"><h2>Eingangskanäle</h2><p class="hint">Woher der Automat die Anfragen bekommt.</p>
+            <dl class="dl">
+              <dt>Webformular</dt><dd>JetFormBuilder → «Call Webhook» mit der URL unten</dd>
+              <dt>Mail-Postfach</dt><dd>spezialreinigung@clean-service.ch → Weiterleitung an Automat <span class="badge b-info">Fallback</span></dd>
+              <dt>Mailversand</dt><dd>Resend über clean-service.ch, Antworten gehen an Spezialreinigung</dd>
+              <dt>Nummernkreis</dt><dd><div class="field" style="margin:0"><label for="nextNr">Nächste Offertnummer</label><input id="nextNr" type="number" style="max-width:180px"></div></dd><dt>Webhook</dt><dd><code id="whUrl" style="font-size:12.5px;word-break:break-all"></code></dd>
+            </dl>
+          </div>
+          <div class="factions"><button type="button" class="btn btn-s" data-go="dash">Abbrechen</button><button type="submit" class="btn btn-p"><div class="ld" data-lottie="loader"></div><span class="lbl2">Speichern</span></button></div>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="pTitle">
+  <div class="panel-h"><div><div class="eyebrow" id="pEyebrow">Offerte</div><h2 id="pTitle">–</h2><div style="margin-top:6px" id="pBadge"></div></div><button class="icon-btn" id="pClose" aria-label="Schliessen"><svg><use href="#i-x"/></svg></button></div>
+  <div class="panel-b" id="pBody"></div>
+  <div class="panel-f" id="pFoot"></div>
+</aside>
+
+<div class="scrim" id="dscrim"></div>
+<nav class="drawer" id="drawer" aria-label="Menü" aria-hidden="true">
+  <div class="dh"><img class="logo-full" src="/brand/logo.png" alt="Clean Service by Scaramuzzo"><button class="icon-btn" id="dClose" aria-label="Menü schliessen"><svg><use href="#i-x"/></svg></button></div>
+  <button class="dnav" data-go="dash" aria-current="page"><svg><use href="#i-home"/></svg>Start</button>
+  <button class="dnav" data-go="anfragen"><svg><use href="#i-inbox"/></svg>Anfragen</button>
+  <button class="dnav" data-go="offerten"><svg><use href="#i-doc"/></svg>Offerten</button>
+  <button class="dnav" data-go="test"><svg><use href="#i-plus"/></svg>Anfrage erfassen</button>
+  <button class="dnav" data-go="preise"><svg><use href="#i-tag"/></svg>Preise</button>
+  <button class="dnav" data-go="auswertung"><svg><use href="#i-chart"/></svg>Auswertung</button>
+  <button class="dnav" data-go="settings"><svg><use href="#i-cog"/></svg>Einstellungen</button>
+</nav>
+
+<div class="doc-modal" id="docModal" role="dialog" aria-modal="true" aria-label="Offerte als Dokument">
+  <div class="doc-wrap">
+    <div class="doc-bar"><b id="docTitle">Offerte</b><div style="display:flex;gap:8px"><button class="btn btn-p" id="docClose"><svg><use href="#i-x"/></svg>Schliessen</button></div></div>
+    <div id="frameBox" style="flex:1;display:flex;justify-content:center;padding:20px 12px 40px"><iframe id="frame" title="Vorschau" style="width:min(980px,100%);height:calc(100vh - 120px);border:1px solid var(--cs-line);border-radius:12px;background:#fff"></iframe></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><div class="ic" id="toastIc"></div><span id="toastTx"></span></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+<script src="/cs-lottie.js"></script>
+<script src="/core.js"></script>
+<script src="/admin.js"></script>
+</body></html>
