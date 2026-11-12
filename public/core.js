@@ -29,7 +29,7 @@ function plzKanton(plz){
 }
 
 /* ---------- Parser für die Formular-Mail ---------- */
-const deDate=v=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(v||'').trim());return m?`${m[3]}.${m[2]}.${m[1]}`:v;};
+const deDate=v=>{const s=String(v||'').trim();let m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s);if(m)return `${m[3]}.${m[2]}.${m[1]}`;m=/^(\d{1,2})\.(\d{1,2})\.(\d{2})$/.exec(s);if(m)return `${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}.20${m[3]}`;return v;};
 function parseMail(txt){
   const t=txt.replace(/\r/g,'');
   const get=k=>{const m=t.match(new RegExp('^[ \\t]*'+k+'[ \\t]*:[ \\t]*(.*)$','mi'));return m?m[1].trim():''};
