@@ -1,3 +1,4 @@
+import { waitUntil } from '@vercel/functions';
 import { json } from '../../../lib/http.js';
 import { webhookOk } from '../../../lib/auth.js';
 import * as db from '../../../lib/db.js';
@@ -14,14 +15,16 @@ export async function POST(req) {
   let fields = {};
   try { fields = await readBody(req); } catch (e) { return json({ error: 'bad body' }, 400); }
   await db.logEvent('webhook_in', { keys: Object.keys(fields) });
-  try {
-    const mailText = typeof fields.mailtext === 'string' && fields.mailtext.length > 50 ? fields.mailtext : fieldsToMail(fields);
-    const o = await processInquiry({ mailText, channel: 'Webformular', raw: fields });
-    return json({ ok: true, nr: o.nr, status: o.status });
-  } catch (e) {
-    await db.logEvent('webhook_error', { error: String(e.message || e) });
-    await notifyTeam('Offerten-Automat: Fehler beim Verarbeiten einer Anfrage', `<p>Eine Webformular-Anfrage konnte nicht automatisch verarbeitet werden. Bitte die Mail manuell prüfen.</p><pre>${String(e.message || e)}</pre>`);
-    return json({ error: 'processing failed' }, 500);
-  }
+  /* Sofort antworten, damit das Formular den Kunden nicht warten lässt; die Offerte entsteht im Hintergrund. */
+  waitUntil((async () => {
+    try {
+      const mailText = typeof fields.mailtext === 'string' && fields.mailtext.length > 50 ? fields.mailtext : fieldsToMail(fields);
+      await processInquiry({ mailText, channel: 'Webformular', raw: fields });
+    } catch (e) {
+      await db.logEvent('webhook_error', { error: String(e.message || e) });
+      await notifyTeam('Offerten-Automat: Fehler beim Verarbeiten einer Anfrage', `<p>Eine Webformular-Anfrage konnte nicht automatisch verarbeitet werden. Bitte die Mail manuell prüfen.</p><pre>${String(e.message || e)}</pre>`);
+    }
+  })());
+  return json({ ok: true, queued: true });
 }
 export async function GET() { return json({ ok: true, service: 'offerten-automat webhook' }); }
