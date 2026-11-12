@@ -17,7 +17,7 @@ const PRICES={
   mwst:0.081
 };
 const CANTON_GROUP={ZH:'ZH / SH',SH:'ZH / SH',TG:'TG / SG / AG / ZG',SG:'TG / SG / AG / ZG',AG:'TG / SG / AG / ZG',ZG:'TG / SG / AG / ZG',LU:'LU / BE / BL / BS',BE:'LU / BE / BL / BS',BL:'LU / BE / BL / BS',BS:'LU / BE / BL / BS'};
-const DEFAULT_SETTINGS={mode:'auto',rules:{canton:true,photos:true,carpet:true,m2:true,house:false,big:true},name:'Lionel Melone',fn:'Spezialreinigung',mail:'spezialreinigung@clean-service.ch',cc:'info@clean-service.ch',valid:30};
+const DEFAULT_SETTINGS={mode:'auto',rules:{canton:true,photos:true,carpet:true,m2:true,house:false,big:true},name:'Lionel Melone',fn:'Spezialreinigung',mail:'spezialreinigung@clean-service.ch',cc:'spezialreinigung@clean-service.ch',valid:30};
 
 /* ---------- PLZ → Kanton (Bereiche) ---------- */
 function plzKanton(plz){
