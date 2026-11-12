@@ -52,6 +52,7 @@ function parseMail(txt){
     bilder:/Bilder:\s*\n?\s*https?:\/\//i.test(t),
     nachricht, quelle:get('Wie sind Sie auf uns aufmerksam geworden\\?')||(t.match(/aufmerksam geworden\?\s*\n\s*(.*)/i)||['',''])[1].trim()
   };
+  if(/^Datenschutz/i.test(q.quelle)) q.quelle='';
   if(!['wenig','mittel','stark'].includes(q.soil)) q.soil='mittel';
   q.teppich=parseInt((q.teppichRaw.match(/\d+/)||['0'])[0],10)||(q.teppichRaw&&!/^(nein|no|-)$/i.test(q.teppichRaw)?1:0);
   const dn=parseInt((q.duebelRaw.match(/\d+/)||['0'])[0],10)||0;
